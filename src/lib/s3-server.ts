@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import fs from 'fs'
 import path from 'path';
+import os from 'os';
 export async function downloadFromS3(file_key:string) {
   try{
    AWS.config.update({
@@ -21,20 +22,22 @@ export async function downloadFromS3(file_key:string) {
 
    const obj = await s3.getObject(params).promise()
 
-const tmpDir = path.join(process.cwd(), "tmp");
-    if (!fs.existsSync(tmpDir)) {
-      fs.mkdirSync(tmpDir, { recursive: true });
-    }
+// const tmpDir = path.join(process.cwd(), "tmp");
+//     if (!fs.existsSync(tmpDir)) {
+//       fs.mkdirSync(tmpDir, { recursive: true });
+//     }
 
-    const file_name = path.join(tmpDir, `pdf-${Date.now()}.pdf`);
-    fs.writeFileSync(file_name, obj.Body as Buffer);
+//     const file_name = path.join(tmpDir, `pdf-${Date.now()}.pdf`);
+//     fs.writeFileSync(file_name, obj.Body as Buffer);
 
+const tmpDir = os.tmpdir(); // system temp folder, always exists
 
+const file_name = path.join(tmpDir, `pdf-${Date.now()}.pdf`);
 
 
 
   //  const file_name = `/tmp/pdf-${Date.now()}.pdf`
-  //  fs.writeFileSync(file_name , obj.Body as Buffer)
+   fs.writeFileSync(file_name , obj.Body as Buffer)
    return file_name
   }
   catch(error){
